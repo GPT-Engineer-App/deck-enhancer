@@ -14,9 +14,20 @@ const Index = () => {
     const sectionHeaders = ["Pokémon:", "Trainer:", "Energy:"];
     const cards = deckList
       .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line.length && !sectionHeaders.some((header) => line.startsWith(header)))
-      .filter((line) => !line.includes("Total Cards:") && !line.match(/^\d+$/));
+      .filter((line) => line.trim() !== "" && !isNaN(line.trim()[0]))
+      .map((line) => {
+        let parts = line.split(" ");
+        let quantity = parseInt(parts[0]);
+        let id = parts.pop();
+        let setCode = parts.pop();
+        let cardName = parts.slice(1).join(" ");
+        return {
+          quantity: quantity,
+          name: encodeURIComponent(cardName.trim()),
+          id: id,
+          setCode: setCode,
+        };
+      });
     if (cards.length !== 60) {
       toast({
         title: "Invalid deck",
