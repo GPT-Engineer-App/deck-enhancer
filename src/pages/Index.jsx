@@ -14,7 +14,7 @@ const Index = () => {
     const sectionHeaders = ["Pokémon:", "Trainer:", "Energy:"];
     const cards = deckList
       .split("\n")
-      .filter((line) => line.trim() !== "" && !isNaN(line.trim()[0]))
+      .filter((line) => /^\d+\s+\D/.test(line.trim()))
       .map((line) => {
         let parts = line.split(" ");
         let quantity = parseInt(parts[0]);
