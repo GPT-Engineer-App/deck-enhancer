@@ -7,6 +7,7 @@ import { FaPlus, FaCheckCircle } from "react-icons/fa";
 const Index = () => {
   const [deckList, setDeckList] = useState("");
   const [analysis, setAnalysis] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
 
   const handleDeckSubmission = async () => {
@@ -26,9 +27,11 @@ const Index = () => {
     }
 
     try {
+      setIsLoading(true);
       const cardDataPromises = cards.map((card) => fetch(`https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(card)}`));
       const cardDataResponses = await Promise.all(cardDataPromises);
       const cardData = await Promise.all(cardDataResponses.map((res) => res.json()));
+      setIsLoading(false);
 
       const deckAnalysis = await fetch("https://api.limitlesstcg.com/v2/decks", {
         method: "POST",
@@ -38,12 +41,13 @@ const Index = () => {
         body: JSON.stringify({ cards: cardData.map((data) => data.data[0].id) }),
       });
 
+      if (!deckAnalysis.ok) throw new Error("Failed to analyze deck.");
       const deckAnalysisResult = await deckAnalysis.json();
       setAnalysis(deckAnalysisResult.recommendations);
     } catch (error) {
       toast({
         title: "Error fetching data",
-        description: "There was an error fetching data from the APIs.",
+        description: error.message || "There was an error fetching data from the APIs.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -62,8 +66,17 @@ const Index = () => {
           <FormLabel htmlFor="deck-list">Deck List</FormLabel>
           <Textarea id="deck-list" value={deckList} onChange={(e) => setDeckList(e.target.value)} placeholder="Enter each card on a new line" size="sm" />
         </FormControl>
-        <Button leftIcon={<FaPlus />} colorScheme="teal" onClick={handleDeckSubmission}>
+        <Button leftIcon={<FaPlus />} colorScheme="teal" isLoading={isLoading} onClick={handleDeckSubmission}>
           Analyze Deck
+        </Button>
+        <Button
+          colorScheme="red"
+          onClick={() => {
+            setDeckList("");
+            setAnalysis([]);
+          }}
+        >
+          Clear Results
         </Button>
         {analysis.length > 0 && (
           <>
