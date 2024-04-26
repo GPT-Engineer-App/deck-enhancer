@@ -31,7 +31,7 @@ const Index = () => {
     if (cards.length !== 60) {
       toast({
         title: "Invalid deck",
-        description: "Please ensure your deck has exactly 60 cards.",
+        description: "Please ensure your deck list format is correct and totals to 60 cards.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -74,7 +74,7 @@ const Index = () => {
         <Heading as="h1" size="xl">
           Pokémon TCG Deck Analyzer
         </Heading>
-        <Text>Enter your deck list below, one card per line:</Text>
+        <Text>Enter your deck list below, with the quantity followed by the card name on each line:</Text>
         <FormControl>
           <FormLabel htmlFor="deck-list">Deck List</FormLabel>
           <Textarea id="deck-list" value={deckList} onChange={(e) => setDeckList(e.target.value)} placeholder="Enter each card on a new line" size="sm" />
