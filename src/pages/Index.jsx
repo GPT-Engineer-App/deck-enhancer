@@ -11,10 +11,12 @@ const Index = () => {
   const toast = useToast();
 
   const handleDeckSubmission = async () => {
+    const sectionHeaders = ["Pokémon:", "Trainer:", "Energy:"];
     const cards = deckList
       .split("\n")
       .map((line) => line.trim())
-      .filter((line) => line.length);
+      .filter((line) => line.length && !sectionHeaders.some((header) => line.startsWith(header)))
+      .filter((line) => !line.includes("Total Cards:") && !line.match(/^\d+$/));
     if (cards.length !== 60) {
       toast({
         title: "Invalid deck",
