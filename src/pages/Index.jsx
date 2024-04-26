@@ -42,7 +42,13 @@ const Index = () => {
 
     try {
       setIsLoading(true);
-      const cardDataPromises = cards.map((card) => fetch(`https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(card)}`));
+      const cardDataPromises = cards.map((card) =>
+        fetch(`https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(card)}`, {
+          headers: {
+            "X-Api-Key": "3833f3af-1479-4b15-acbf-6976f78ad79b",
+          },
+        }),
+      );
       const cardDataResponses = await Promise.all(cardDataPromises);
       const cardData = await Promise.all(cardDataResponses.map((res) => res.json()));
       const filteredCardData = cardData.filter((data) => data.data.length > 0);
