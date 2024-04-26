@@ -28,7 +28,8 @@ const Index = () => {
           setCode: setCode,
         };
       });
-    if (cards.length !== 60) {
+    const totalCards = cards.reduce((acc, card) => acc + card.quantity, 0);
+    if (totalCards !== 60) {
       toast({
         title: "Invalid deck",
         description: "Please ensure your deck list format is correct and totals to 60 cards.",
