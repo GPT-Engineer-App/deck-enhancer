@@ -45,6 +45,7 @@ const Index = () => {
       const cardDataPromises = cards.map((card) => fetch(`https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(card)}`));
       const cardDataResponses = await Promise.all(cardDataPromises);
       const cardData = await Promise.all(cardDataResponses.map((res) => res.json()));
+      const filteredCardData = cardData.filter((data) => data.data.length > 0);
       setIsLoading(false);
 
       const deckAnalysis = await fetch("https://api.limitlesstcg.com/v2/decks", {
@@ -52,7 +53,7 @@ const Index = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ cards: cardData.map((data) => data.data[0].id) }),
+        body: JSON.stringify({ cards: filteredCardData.map((data) => data.data[0].id) }),
       });
 
       if (!deckAnalysis.ok) throw new Error("Failed to analyze deck.");
